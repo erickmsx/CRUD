@@ -11,14 +11,16 @@ import CoreData
 struct NewDataView: View {
     
     @ObservedObject var homeData: HomeViewModel
+    
     @Environment(\.managedObjectContext) var context
+    
     var body: some View {
         
         VStack{
             HStack{
                 
                 Text("\(homeData.updateItem == nil ? "Adicione Uma" : "Editar") Tarefa")
-                    .font(.system(size: 60))
+                    .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.black)
                 
@@ -26,15 +28,23 @@ struct NewDataView: View {
             }
             .padding()
             
-            TextEditor(text: $homeData.content)
+            VStack {
+                TextEditor(text: $homeData.content)
+                    .padding()
+            }.background(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(Color.blue)
+            )
                 .padding()
+            
             
             Divider()
                 .padding(.horizontal)
             
             HStack{
                 Text("Clique Abaixo Para Confirmar")
-                    .font(.title)
+                    .font(.system(size: 12))
                     .fontWeight(.bold)
                     .foregroundColor(.black)
                 
@@ -55,7 +65,9 @@ struct NewDataView: View {
                         .foregroundColor(.white)
                     })
                     .padding(.vertical)
-                    .frame(width: UIScreen.main.bounds.width - 30)
+//                    .frame(width: UIScreen.main.bounds.width - 30)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 15)
                     .background(
                         
                         LinearGradient(gradient: .init(colors: [Color("Color"), Color("Color1")]), startPoint: .leading, endPoint: .trailing)

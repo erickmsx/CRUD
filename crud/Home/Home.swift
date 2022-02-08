@@ -18,21 +18,23 @@ struct Home: View {
     
     var body: some View {
         
-        ZStack(alignment: Alignment(horizontal: .trailing, vertical: .bottom), content: {  
+        ZStack(alignment: Alignment(horizontal: .trailing, vertical: .bottom), content: {
             
-            VStack(spacing: 0){
+            VStack(spacing: 0) {
                 
                 HStack{
                     
                     Text("Tarefas")
-                        .font(.largeTitle)
+                        .font(.title)
                         .fontWeight(.heavy)
                         .foregroundColor(.black)
                     
-                    Spacer(minLength: 0)
+//                    Spacer()
+                    
                 }
                 .padding()
                 .padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.white)
                 
                 if results.isEmpty{
@@ -59,20 +61,24 @@ struct Home: View {
                                         .font(.title)
                                         .fontWeight(.bold)
                                 })
-                                .foregroundColor(.black)
-                                .contextMenu{
-                                    
-                                    Button(action: { homeData.editItem(item: task)}, label: {
-                                        Text("Edit")
-                                    })
-                                    
-                                    Button(action: {
-                                        context.delete(task)
-                                        try! context.save()
-                                    }, label: {
-                                        Text("Delete")
-                                    })
-                                }
+                                    .foregroundColor(.black)
+                                    .background(Color.blue.opacity(0.4))
+                                    .onTapGesture {
+                                        homeData.editItem(item: task)
+                                    }
+                                    .contextMenu {
+                                        
+                                        Button(action: { homeData.editItem(item: task)}, label: {
+                                            Text("Edit")
+                                        })
+                                        
+                                        Button(action: {
+                                            homeData.delete(context: context, task: task)
+                                        }, label: {
+                                            Text("Delete")
+                                        })
+                                    }
+                                
                             }
                         }
                         .padding()
@@ -90,13 +96,16 @@ struct Home: View {
                         AngularGradient(gradient: .init(colors: [Color("Color"), Color("Color1")]), center: .center))
                     .clipShape(Circle())
             })
-            .padding()
+                .padding()
         })
-        .ignoresSafeArea(.all, edges: .top)
-        .background(Color.black.opacity(0.06).ignoresSafeArea(.all, edges: .all))
-        .sheet(isPresented: $homeData.isNewData, content: {
-            
-            NewDataView(homeData: homeData)
-        })
+            .ignoresSafeArea(.all, edges: .top)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(Color.black.opacity(0.06).ignoresSafeArea(.all, edges: .all))
+            .sheet(isPresented: $homeData.isNewData, onDismiss: {
+                homeData.content = ""
+                homeData.updateItem = nil
+            }, content: {
+                NewDataView(homeData: homeData)
+            })
     }
 }
